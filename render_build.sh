@@ -3,8 +3,9 @@
 set -o errexit
 
 npm install
-# npm run build
+npm run build
 
-pipenv install
+pip install pipenv  # Añade esta línea
+pipenv install      # Tu línea 8 original
 
 pipenv run upgrade
