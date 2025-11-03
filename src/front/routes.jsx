@@ -15,6 +15,7 @@ import Tasks from "./pages/Tasks"
 import ProtectedRoute from "./components/ProtectedRoute";
 import ResetPass from "./pages/ResetPass";
 import UpdatePassword from "./pages/UpdatePasword";
+import ActivateAccount from "./pages/ActivateAccount";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +43,7 @@ export const router = createBrowserRouter(
       <Route path="/demo" element={<Demo />} />
 
       <Route path="/password-update" element={<UpdatePassword />} />
+      <Route path="/activate-account" element={<ActivateAccount />} />
 
 
       <Route path="*" element={<h1>Not found</h1>} />

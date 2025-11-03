@@ -15,6 +15,8 @@ const urlBase = import.meta.env.VITE_BACKEND_URL
 const Register = () => {
 
     const [user, setUser] = useState(initialUserState)
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errors, setErrors] = useState({}); // { password: '...', confirm: '...' }
     const fileInputRef = useRef(null)
 
     const navigate = useNavigate()
@@ -38,10 +40,23 @@ const Register = () => {
 
     }
 
-
+    const handleConfirmChange = (e) => {
+        setConfirmPassword(e.target.value);
+        // validar coincidencia en cada cambio para experiencia UX
+        if (user.password && e.target.value !== user.password) {
+            setErrors(prev => ({ ...prev, confirm: 'Las contraseñas no coinciden' }));
+        } else {
+            setErrors(prev => ({ ...prev, confirm: null }));
+        }
+    }
     const handleSubmit = async (event) => {
         event.preventDefault()
         // validar que todos los campos esten llenos
+
+        if (user.password !== confirmPassword) {
+            setErrors(prev => ({ ...prev, confirm: 'Las contraseñas no coinciden' }));
+            return;
+        }
 
         const formData = new FormData()
         formData.append("lastname", user.lastname)
@@ -140,7 +155,20 @@ const Register = () => {
                                     value={user.password}
                                 />
                             </div>
+                            <div className="form-group mb-3">
+                                <label htmlFor="btnValidatePassword">Vuelve a escribir la Contraseña</label>
+                                <input
+                                    type="password"
+                                    placeholder="Contraseña nuevamente"
+                                    className="form-control"
+                                    id="btnValidatePassword"
+                                    name="validatePasword"
+                                    value={confirmPassword}
+                                    onChange={handleConfirmChange}
 
+                                />
+                                {errors.confirm && <div className="text-danger mt-1">{errors.confirm}</div>}
+                            </div>
 
                             <button
                                 className="btn btn-outline-primary w-100"

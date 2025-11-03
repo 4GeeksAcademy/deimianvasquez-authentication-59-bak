@@ -36,7 +36,7 @@ def register_user():
         "password": data_form.get("password"),
         "lastname": data_form.get("lastname"),
         "avatar": data_files.get("avatar"),
-        "is_active": True,
+        "is_active": False,
         "salt": 1
     }
 
@@ -74,6 +74,20 @@ def register_user():
 
     try:
         db.session.commit()
+        # Enviar un correo para activar la cuenta
+        recovery_token = create_access_token(identity=str(
+            new_user.id), expires_delta=timedelta(minutes=15))
+        subject = "Activa tu cuenta"
+        to = new_user.email
+        body = f"""
+                <div>
+                    <h1>Bienvenido a nuestra plataforma</h1>
+                    <p>Para activar tu cuenta, haz clic en el siguiente enlace:</p>
+                    <a href="{os.getenv('VITE_FRONTEND_URL')}/activate-account?token={recovery_token}">Activar cuenta</a>
+                </div>
+            """
+        response = send_email(subject, to, body)
+        print(response)
         return jsonify({"message": "user created succesfuly"}), 201
     except Exception as error:
         db.session.rollback()
@@ -153,7 +167,7 @@ def recovery_password():
                 <div>
                     <h1>Recuperación de contraseña, ingresa en el siguiente link</h1>
                     <a 
-                        href="https://chilling-spooky-hobgoblin-ppgwrqgxvg5hr9pr-3000.app.github.dev/password-update?token={recovery_token}"
+                        href="{os.getenv('VITE_FRONTEND_URL')}/api/password-update?token={recovery_token}"
                     >
                         ir a recuperar contraseña
                     </a>
